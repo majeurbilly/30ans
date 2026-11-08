@@ -180,7 +180,7 @@ export function draw3DWorldTextured(ctx, player, map, textures) {
 /**
  * @param {CanvasRenderingContext2D} ctx
  * @param {import('./player.js').Player} player
- * @param {{x:number,y:number,color:string}[]} sprites sorted far → near
+ * @param {{x:number,y:number,color?:string,image?:CanvasImageSource,scale?:number}[]} sprites sorted far → near
  */
 export function drawSprites3D(ctx, player, sprites) {
   const dir = player.direction;
@@ -196,16 +196,35 @@ export function drawSprites3D(ctx, player, sprites) {
     const transformY = invDet * (-planeY * spriteX + planeX * spriteY);
     if (transformY <= 0) continue;
 
+    const sizeScale = sprite.scale ?? 0.5;
     const spriteScreenX = Math.floor((SCREEN_WIDTH / 2) * (1 + transformX / transformY));
-    const spriteHeight = Math.abs((SCREEN_HEIGHT / transformY) * 100 * 0.5);
-    const drawWidth = Math.floor(spriteHeight);
+    const spriteHeight = Math.abs((SCREEN_HEIGHT / transformY) * 100 * sizeScale);
+    const drawWidth = Math.floor(spriteHeight * (sprite.image ? 0.85 : 1));
     const drawHeight = Math.floor(spriteHeight);
     const drawStartX = spriteScreenX - Math.floor(drawWidth / 2);
     const drawEndX = spriteScreenX + Math.floor(drawWidth / 2);
     const drawStartY = HALF_SCREEN - Math.floor(drawHeight / 2);
     const drawEndY = HALF_SCREEN + Math.floor(drawHeight / 2);
 
-    ctx.fillStyle = sprite.color;
+    if (sprite.image) {
+      const img = sprite.image;
+      const imgW = img.naturalWidth || img.width;
+      const imgH = img.naturalHeight || img.height;
+      for (let stripe = drawStartX; stripe < drawEndX; stripe++) {
+        if (stripe < 0 || stripe >= SCREEN_WIDTH) continue;
+        if (transformY >= zBuffer[stripe]) continue;
+        const texX = Math.floor(((stripe - drawStartX) / Math.max(1, drawWidth)) * imgW);
+        const yStart = Math.max(0, drawStartY);
+        const yEnd = Math.min(SCREEN_HEIGHT, drawEndY);
+        if (yStart >= yEnd) continue;
+        const srcY = Math.floor(((yStart - drawStartY) / Math.max(1, drawHeight)) * imgH);
+        const srcH = Math.max(1, Math.floor(((yEnd - yStart) / Math.max(1, drawHeight)) * imgH));
+        ctx.drawImage(img, texX, srcY, 1, srcH, stripe, yStart, 1, yEnd - yStart);
+      }
+      continue;
+    }
+
+    ctx.fillStyle = sprite.color || "#fff";
     for (let stripe = drawStartX; stripe < drawEndX; stripe++) {
       if (stripe < 0 || stripe >= SCREEN_WIDTH) continue;
       if (transformY >= zBuffer[stripe]) continue;

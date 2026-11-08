@@ -41,8 +41,12 @@
               <h1>30 ans de Billy &amp; Micky Blue</h1>
             </div>
           </div>
-          <p class="tagline">Vos deux porn stars préférés vous conviennent à leur fête. Explore le labyrinthe, récupère les 4 indices… et fuis le fantôme.</p>
-          <p class="mission">Objectif : trouver <strong>quand</strong>, <strong>où</strong>, <strong>quoi</strong> et <strong>comment on mange</strong> — sans te faire attraper.</p>
+          <p class="tagline">Vos deux porn stars préférés vous conviennent à leur fête. Explore le labyrinthe, récupère les 4 indices… et fuis Billy &amp; Mick.</p>
+          <p class="mission">Objectif : trouver le <strong>quand</strong>, <strong>où</strong>, <strong>pourquoi</strong> et <strong>comment</strong> — sans te faire attraper par Billy et Mick.</p>
+          <fieldset class="name-picker">
+            <legend>Choisis ton nom</legend>
+            <div id="name-options" class="name-options" role="radiogroup" aria-label="Nom du joueur"></div>
+          </fieldset>
           <div class="controls" id="controls-pc">
             <div><span>ZQSD / WASD</span> se déplacer</div>
             <div><span>Souris</span> regarder</div>
@@ -54,7 +58,7 @@
             <div><span>Zone droite</span> regarder</div>
             <div><span>Courir</span> bouton bas-droite</div>
           </div>
-          <button id="btn-play" class="btn" type="button">Entrer dans le château</button>
+          <button id="btn-play" class="btn" type="button" disabled>Entrer dans le château</button>
         </div>
       </div>
 
@@ -62,7 +66,7 @@
         <div class="panel">
           <h2>Attrapé !</h2>
           <p id="final-score" class="final-score">Score final: 0</p>
-          <p>Le fantôme t’a eu. Relance pour récupérer les infos de la fête.</p>
+          <p>Billy et Mick t’ont eu. Relance pour récupérer les infos de la fête.</p>
           <button id="btn-restart" class="btn" type="button">Recommencer</button>
         </div>
       </div>
@@ -75,8 +79,8 @@
           <p class="form-intro">Confirme ta présence — on reçoit ton score et ta réponse par courriel.</p>
           <form id="rsvp-form" class="rsvp-form" novalidate>
             <label>
-              Ton prénom
-              <input type="text" name="name" id="guest-name" required autocomplete="given-name" placeholder="Ex. Alex">
+              Ton nom
+              <input type="text" name="name" id="guest-name" required readonly>
             </label>
             <label>
               Ton courriel

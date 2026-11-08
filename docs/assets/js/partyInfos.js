@@ -15,20 +15,22 @@ export const PARTY_INFOS = [
   },
   {
     id: "activite",
-    shortLabel: "Quoi",
-    title: "Le programme",
+    shortLabel: "Pourquoi",
+    title: "Le pourquoi",
     body:
       "Rien de cimenté : on se retrouve chez Bibi pour jouer ensemble dans le salon. Amène ta manette pour que tout le monde ait un weapon entre les mains !",
     color: "#e07ad1",
   },
   {
     id: "bouffe",
-    shortLabel: "Bouffe",
-    title: "La bouffe",
+    shortLabel: "Comment",
+    title: "Le comment",
     body:
       "À voir si on se fait livrer ou si on va manger quelque part. Amenez vos breuvages, s’il vous plaît — xoxo.",
     color: "#7dce82",
   },
 ];
+
+export const PLAYER_NAMES = ["NoNo", "MP", "glossydrinko", "Micky Blue", "Billy Blue"];
 
 export const FORMSPREE_ENDPOINT = "https://formspree.io/f/xzeelpkz";

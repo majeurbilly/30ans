@@ -13,7 +13,7 @@ import { Ghost } from "./ghost.js";
 import { InfoPickup } from "./infoPickup.js";
 import { Map } from "./map.js";
 import { distance } from "./mathUtils.js";
-import { FORMSPREE_ENDPOINT, PARTY_INFOS } from "./partyInfos.js";
+import { FORMSPREE_ENDPOINT, PARTY_INFOS, PLAYER_NAMES } from "./partyInfos.js";
 import { Player } from "./player.js";
 import { draw3DWorldTextured, drawMinimap, drawSprites3D } from "./rays.js";
 import { createTouchControls, isTouchPreferred } from "./touchControls.js";
@@ -43,6 +43,8 @@ const rsvpForm = document.getElementById("rsvp-form");
 const formStatus = document.getElementById("form-status");
 const formScore = document.getElementById("form-score");
 const formSurvival = document.getElementById("form-survival");
+const guestNameInput = document.getElementById("guest-name");
+const nameOptionsEl = document.getElementById("name-options");
 const controlsPc = document.getElementById("controls-pc");
 const controlsTouch = document.getElementById("controls-touch");
 const touchRoot = document.getElementById("touch-controls");
@@ -52,6 +54,7 @@ let player;
 let ghost;
 let pickups = [];
 let textures = [];
+let ghostImage = null;
 let showMinimap = false;
 let running = false;
 let toastTimer = 0;
@@ -67,6 +70,7 @@ const state = {
   totalInfos: PARTY_INFOS.length,
   isGameOver: false,
   isVictory: false,
+  playerName: "",
 };
 
 if (useTouch) {
@@ -108,6 +112,25 @@ async function loadTextures() {
     "assets/resources/brickwall2.png",
   ];
   textures = await Promise.all(files.map(loadImage));
+  ghostImage = await loadImage("images/ghost-billy-mick.jpg");
+}
+
+function setupNamePicker() {
+  nameOptionsEl.innerHTML = PLAYER_NAMES.map(
+    (name) =>
+      `<button type="button" class="name-option" data-name="${name}" aria-pressed="false">${name}</button>`
+  ).join("");
+
+  nameOptionsEl.addEventListener("click", (e) => {
+    const btn = e.target.closest(".name-option");
+    if (!btn) return;
+    state.playerName = btn.dataset.name;
+    nameOptionsEl.querySelectorAll(".name-option").forEach((el) => {
+      el.classList.toggle("selected", el === btn);
+      el.setAttribute("aria-pressed", el === btn ? "true" : "false");
+    });
+    playBtn.disabled = false;
+  });
 }
 
 function spawnEntities() {
@@ -184,6 +207,7 @@ function requestPointerLock() {
 }
 
 function beginPlay() {
+  if (!state.playerName) return;
   resetGame();
   startOverlay.hidden = true;
   running = true;
@@ -209,6 +233,7 @@ function endGameWon() {
   ).join("");
   formScore.value = String(state.score);
   formSurvival.value = `${Math.floor(state.totalSurvival)}s`;
+  guestNameInput.value = state.playerName;
   victoryOverlay.hidden = false;
   document.exitPointerLock?.();
   touch.hide();
@@ -316,7 +341,15 @@ function render() {
 
   draw3DWorldTextured(ctx, player, map, textures);
 
-  const sprites = [{ x: ghost.x, y: ghost.y, color: "#ff2222" }];
+  const sprites = [
+    {
+      x: ghost.x,
+      y: ghost.y,
+      color: "#ff2222",
+      image: ghostImage,
+      scale: 0.72,
+    },
+  ];
   for (const pickup of pickups) {
     if (pickup.collected) continue;
     sprites.push({ x: pickup.x, y: pickup.y, color: pickup.color });
@@ -366,13 +399,13 @@ canvas.addEventListener("click", () => {
 
 rsvpForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const name = document.getElementById("guest-name").value.trim();
+  const name = state.playerName || guestNameInput.value.trim();
   const email = document.getElementById("guest-email").value.trim();
   const rsvp = document.getElementById("guest-rsvp").value;
   const message = document.getElementById("guest-message").value.trim();
 
   if (!name || !email) {
-    formStatus.textContent = "Prénom et courriel requis.";
+    formStatus.textContent = "Nom et courriel requis.";
     formStatus.className = "form-status form-error";
     return;
   }
@@ -418,6 +451,8 @@ rsvpForm.addEventListener("submit", async (e) => {
 window.addEventListener("keydown", onKeyDown);
 window.addEventListener("keyup", onKeyUp);
 window.addEventListener("mousemove", onMouseMove);
+
+setupNamePicker();
 
 loadTextures()
   .then(() => {
