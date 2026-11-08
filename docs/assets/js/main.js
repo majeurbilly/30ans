@@ -55,6 +55,7 @@ let ghost;
 let pickups = [];
 let textures = [];
 let ghostImage = null;
+let infoImages = {};
 let showMinimap = false;
 let running = false;
 let toastTimer = 0;
@@ -113,6 +114,10 @@ async function loadTextures() {
   ];
   textures = await Promise.all(files.map(loadImage));
   ghostImage = await loadImage("images/ghost-billy-mick.jpg");
+  const loaded = await Promise.all(
+    PARTY_INFOS.map(async (info) => [info.id, await loadImage(info.image)])
+  );
+  infoImages = Object.fromEntries(loaded);
 }
 
 function setupNamePicker() {
@@ -150,7 +155,7 @@ function spawnEntities() {
     const pos = map.getRandomEmptyPosition(excluded);
     const cell = map.cellOf(pos);
     excluded.push([cell.x, cell.y]);
-    return new InfoPickup(info, pos);
+    return new InfoPickup(info, pos, infoImages[info.id] || null);
   });
 }
 
@@ -352,7 +357,13 @@ function render() {
   ];
   for (const pickup of pickups) {
     if (pickup.collected) continue;
-    sprites.push({ x: pickup.x, y: pickup.y, color: pickup.color });
+    sprites.push({
+      x: pickup.x,
+      y: pickup.y,
+      color: pickup.color,
+      image: pickup.image,
+      scale: 0.48,
+    });
   }
   sprites.sort((a, b) => {
     const da = distance(player.x, player.y, a.x, a.y);
