@@ -217,7 +217,7 @@ export function drawSprites3D(ctx, player, sprites) {
   }
 }
 
-export function drawMinimap(ctx, player, map, ghost, knife, showKnife) {
+export function drawMinimap(ctx, player, map, ghost, pickups = []) {
   const scale = 0.18;
   const tile = TILE_SIZE * scale;
   const originX = 10;
@@ -257,10 +257,11 @@ export function drawMinimap(ctx, player, map, ghost, knife, showKnife) {
   ctx.arc(originX + ghost.x * scale, originY + ghost.y * scale, 3, 0, TWO_PI);
   ctx.fill();
 
-  if (showKnife) {
-    ctx.fillStyle = "#5ad1e6";
+  for (const pickup of pickups) {
+    if (pickup.collected) continue;
+    ctx.fillStyle = pickup.color;
     ctx.beginPath();
-    ctx.arc(originX + knife.x * scale, originY + knife.y * scale, 2.5, 0, TWO_PI);
+    ctx.arc(originX + pickup.x * scale, originY + pickup.y * scale, 2.5, 0, TWO_PI);
     ctx.fill();
   }
 

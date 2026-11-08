@@ -8,25 +8,22 @@ export function advanceSurvival(state, deltaTime) {
   return true;
 }
 
-export function tryPickupKnife(state, distanceToKnife, pickupThreshold) {
-  if (!state.isKnifeSpawned || distanceToKnife >= pickupThreshold) return false;
-  state.hasKnife = true;
-  state.isKnifeSpawned = false;
-  return true;
-}
-
-export function tryUseKnife(state, isAttackPressed) {
-  if (!state.hasKnife || !isAttackPressed) return false;
-  state.hasKnife = false;
-  return true;
-}
-
-export function resolveGhostCollision(state, playerAttacked, distanceToGhost, collisionThreshold) {
-  if (distanceToGhost >= collisionThreshold) return false;
-  if (playerAttacked) {
-    state.score += 1000;
-    return true;
+export function tryPickupInfo(state, info, distanceToInfo, pickupThreshold) {
+  if (!info || info.collected) return false;
+  if (distanceToInfo >= pickupThreshold) return false;
+  info.collected = true;
+  if (!state.collectedIds.includes(info.id)) {
+    state.collectedIds.push(info.id);
   }
+  state.score += 250;
+  if (state.collectedIds.length >= state.totalInfos) {
+    state.isVictory = true;
+  }
+  return true;
+}
+
+export function resolveGhostCollision(state, distanceToGhost, collisionThreshold) {
+  if (distanceToGhost >= collisionThreshold) return false;
   state.isGameOver = true;
-  return false;
+  return true;
 }

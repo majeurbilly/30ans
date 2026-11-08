@@ -2,9 +2,11 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Castle of SFML — jeu de survie raycaster 3D, 100% frontend.">
-  <title>Castle of SFML</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Invitation interactive aux 30 ans de Billy & Micky Blue — explore le labyrinthe, récupère les infos de la fête.">
+  <meta name="theme-color" content="#0b0a10">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>30 ans — Billy & Micky Blue</title>
   <link rel="icon" href="images/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,41 +16,101 @@
 <body>
   <div id="app">
     <div id="game-wrap">
-      <canvas id="game" width="640" height="360" aria-label="Zone de jeu Castle of SFML"></canvas>
+      <canvas id="game" width="640" height="360" aria-label="Invitation 30 ans Billy et Micky Blue"></canvas>
 
       <div id="hud">
         <div class="top-left">
-          <div id="score-line">Score: 0 | Survie: 0s</div>
-          <div id="knife-hint">COUTEAU ÉQUIPÉ ! [ESPACE] pour attaquer</div>
+          <div id="score-line">Infos 0/4 · Score 0 · Survie 0s</div>
+          <div id="info-chips" aria-live="polite"></div>
         </div>
         <div id="fps">FPS: --</div>
       </div>
 
+      <div id="pickup-toast" class="toast" hidden>
+        <p class="toast-kicker" id="toast-kicker">Info trouvée</p>
+        <h3 id="toast-title">Titre</h3>
+        <p id="toast-body">Détail</p>
+      </div>
+
       <div id="start" class="overlay">
-        <div class="panel">
+        <div class="panel panel-scroll">
           <div class="brand">
-            <img src="images/logo.png" alt="Logo Castle of SFML" width="64" height="64">
-            <h1>Castle of SFML</h1>
+            <img src="images/logo.png" alt="Logo" width="64" height="64">
+            <div class="brand-copy">
+              <p class="eyebrow">Invitation interactive</p>
+              <h1>30 ans de Billy &amp; Micky Blue</h1>
+            </div>
           </div>
-          <p>Survis dans le château. Le fantôme te traque. Ramasse le couteau… et frappe au bon moment.</p>
-          <div class="controls">
+          <p class="tagline">Vos deux porn stars préférés vous conviennent à leur fête. Explore le labyrinthe, récupère les 4 indices… et fuis le fantôme.</p>
+          <p class="mission">Objectif : trouver <strong>quand</strong>, <strong>où</strong>, <strong>quoi</strong> et <strong>comment on mange</strong> — sans te faire attraper.</p>
+          <div class="controls" id="controls-pc">
             <div><span>ZQSD / WASD</span> se déplacer</div>
             <div><span>Souris</span> regarder</div>
             <div><span>Maj</span> courir</div>
-            <div><span>Espace</span> attaquer (couteau)</div>
             <div><span>M</span> minimap</div>
           </div>
-          <button id="btn-play" class="btn" type="button">Jouer</button>
+          <div class="controls" id="controls-touch" hidden>
+            <div><span>Joystick gauche</span> se déplacer</div>
+            <div><span>Zone droite</span> regarder</div>
+            <div><span>Courir</span> bouton bas-droite</div>
+          </div>
+          <button id="btn-play" class="btn" type="button">Entrer dans le château</button>
         </div>
       </div>
 
       <div id="gameover" class="overlay" hidden>
         <div class="panel">
-          <h2>Game Over</h2>
+          <h2>Attrapé !</h2>
           <p id="final-score" class="final-score">Score final: 0</p>
-          <p>Appuie sur <strong>R</strong> ou clique pour recommencer.</p>
+          <p>Le fantôme t’a eu. Relance pour récupérer les infos de la fête.</p>
           <button id="btn-restart" class="btn" type="button">Recommencer</button>
         </div>
+      </div>
+
+      <div id="victory" class="overlay" hidden>
+        <div class="panel panel-scroll">
+          <h2 class="victory-title">Tu as tout trouvé !</h2>
+          <p id="victory-score" class="final-score">Score final: 0</p>
+          <ul id="victory-summary" class="info-summary"></ul>
+          <p class="form-intro">Confirme ta présence — on reçoit ton score et ta réponse par courriel.</p>
+          <form id="rsvp-form" class="rsvp-form" novalidate>
+            <label>
+              Ton prénom
+              <input type="text" name="name" id="guest-name" required autocomplete="given-name" placeholder="Ex. Alex">
+            </label>
+            <label>
+              Ton courriel
+              <input type="email" name="email" id="guest-email" required autocomplete="email" placeholder="toi@exemple.com">
+            </label>
+            <label>
+              Tu viens ?
+              <select name="rsvp" id="guest-rsvp" required>
+                <option value="Oui">Oui, présent·e</option>
+                <option value="Peut-être">Peut-être</option>
+                <option value="Non">Non, désolé·e</option>
+              </select>
+            </label>
+            <label>
+              Message (optionnel)
+              <textarea name="message" id="guest-message" rows="2" placeholder="Une note pour Billy &amp; Micky…"></textarea>
+            </label>
+            <input type="hidden" name="score" id="form-score">
+            <input type="hidden" name="survival" id="form-survival">
+            <input type="hidden" name="_subject" value="RSVP 30 ans Billy & Micky Blue">
+            <button type="submit" class="btn" id="btn-rsvp">Envoyer mon RSVP</button>
+            <p id="form-status" class="form-status" role="status" aria-live="polite"></p>
+          </form>
+          <button id="btn-replay" class="btn btn-ghost" type="button">Rejouer</button>
+        </div>
+      </div>
+
+      <div id="touch-controls" hidden>
+        <div id="stick-move" class="stick" aria-hidden="true">
+          <div class="stick-base"></div>
+          <div class="stick-knob"></div>
+        </div>
+        <div id="look-zone" aria-hidden="true"></div>
+        <button type="button" id="btn-sprint" class="touch-btn">Courir</button>
       </div>
     </div>
   </div>
