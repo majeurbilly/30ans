@@ -35,6 +35,6 @@ export const PARTY_INFOS = [
   },
 ];
 
-export const PLAYER_NAMES = ["NoNo", "MP", "glossydrinko", "Micky Blue", "Billy Blue"];
+export const PLAYER_NAMES = ["MickMcMuffin", "NoNo", "MP", "glossydrinko", "camaradière"];
 
 export const FORMSPREE_ENDPOINT = "https://formspree.io/f/xzeelpkz";
