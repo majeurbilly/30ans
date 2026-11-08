@@ -411,12 +411,11 @@ canvas.addEventListener("click", () => {
 rsvpForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const name = state.playerName || guestNameInput.value.trim();
-  const email = document.getElementById("guest-email").value.trim();
   const rsvp = document.getElementById("guest-rsvp").value;
   const message = document.getElementById("guest-message").value.trim();
 
-  if (!name || !email) {
-    formStatus.textContent = "Nom et courriel requis.";
+  if (!name) {
+    formStatus.textContent = "Choisis ton nom avant d’envoyer.";
     formStatus.className = "form-status form-error";
     return;
   }
@@ -435,7 +434,6 @@ rsvpForm.addEventListener("submit", async (e) => {
       },
       body: JSON.stringify({
         name,
-        email,
         rsvp,
         message,
         score: state.score,
