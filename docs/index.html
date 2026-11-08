@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Castle of SFML — jeu de survie raycaster 3D, 100% frontend.">
+  <title>Castle of SFML</title>
+  <link rel="icon" href="images/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <div id="app">
+    <div id="game-wrap">
+      <canvas id="game" width="640" height="360" aria-label="Zone de jeu Castle of SFML"></canvas>
+
+      <div id="hud">
+        <div class="top-left">
+          <div id="score-line">Score: 0 | Survie: 0s</div>
+          <div id="knife-hint">COUTEAU ÉQUIPÉ ! [ESPACE] pour attaquer</div>
+        </div>
+        <div id="fps">FPS: --</div>
+      </div>
+
+      <div id="start" class="overlay">
+        <div class="panel">
+          <div class="brand">
+            <img src="images/logo.png" alt="Logo Castle of SFML" width="64" height="64">
+            <h1>Castle of SFML</h1>
+          </div>
+          <p>Survis dans le château. Le fantôme te traque. Ramasse le couteau… et frappe au bon moment.</p>
+          <div class="controls">
+            <div><span>ZQSD / WASD</span> se déplacer</div>
+            <div><span>Souris</span> regarder</div>
+            <div><span>Maj</span> courir</div>
+            <div><span>Espace</span> attaquer (couteau)</div>
+            <div><span>M</span> minimap</div>
+          </div>
+          <button id="btn-play" class="btn" type="button">Jouer</button>
+        </div>
+      </div>
+
+      <div id="gameover" class="overlay" hidden>
+        <div class="panel">
+          <h2>Game Over</h2>
+          <p id="final-score" class="final-score">Score final: 0</p>
+          <p>Appuie sur <strong>R</strong> ou clique pour recommencer.</p>
+          <button id="btn-restart" class="btn" type="button">Recommencer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="assets/js/main.js"></script>
+</body>
+</html>
